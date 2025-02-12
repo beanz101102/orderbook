@@ -100,7 +100,6 @@ const Orderbook: React.FC = () => {
         </div>
       </div>
 
-      {/* Content Section */}
       <div className="flex-1 min-h-0 p-4">
         {activeTab === "combined" && (
           <div className="h-full flex flex-col space-y-1">
@@ -114,12 +113,13 @@ const Orderbook: React.FC = () => {
               />
             </div>
 
-            {/* Current Price Section */}
             <div className="bg-gray-800/20 px-4 py-3 rounded-lg">
               <div className="flex items-center justify-center">
                 <div className="text-2xl font-semibold">
                   {formatNumber(
-                    transformedAsks[0]?.price || transformedBids[0]?.price || 0,
+                    transformedAsks[transformedAsks.length - 1]?.price ||
+                      transformedBids[0]?.price ||
+                      0,
                     decimals
                   )}
                   <span className="text-sm text-gray-400 ml-2">

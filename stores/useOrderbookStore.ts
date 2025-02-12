@@ -29,7 +29,6 @@ const useOrderbookStore = create<OrderbookState>()(
       const updatedAsks = [...state.asks];
       const updatedBids = [...state.bids];
 
-      // Process asks updates
       if (asks && asks.length > 0) {
         asks.forEach(([price, size]) => {
           const index = updatedAsks.findIndex(([p]) => p === price);
@@ -45,7 +44,6 @@ const useOrderbookStore = create<OrderbookState>()(
         });
       }
 
-      // Process bids updates
       if (bids && bids.length > 0) {
         bids.forEach(([price, size]) => {
           const index = updatedBids.findIndex(([p]) => p === price);
@@ -61,7 +59,6 @@ const useOrderbookStore = create<OrderbookState>()(
         });
       }
 
-      // Sort orders
       updatedAsks.sort((a, b) => parseFloat(a[0]) - parseFloat(b[0]));
       updatedBids.sort((a, b) => parseFloat(b[0]) - parseFloat(a[0]));
 

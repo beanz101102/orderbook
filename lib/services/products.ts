@@ -1,22 +1,27 @@
-"use server";
+import { Product } from "@/components/features/orderbook/interface";
+import { create } from "apisauce";
 
-export async function getProducts() {
+const api = create({
+  baseURL: "https://api.bsx.exchange",
+});
+
+export const getProducts = async (): Promise<{ products: Product[] }> => {
   try {
-    const response = await fetch("https://api.bsx.exchange/products", {
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      cache: "force-cache",
-    });
+    const response = await api.get<{ products: Product[] }>("/products");
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new Error(`Failed to fetch products: ${response.problem}`);
     }
 
-    return response.json();
+    if (!response.data) {
+      throw new Error("No data received from products endpoint");
+    }
+
+    return response.data;
   } catch (error) {
     console.error("Error fetching products:", error);
-    throw new Error("Failed to fetch products");
+    throw error instanceof Error
+      ? error
+      : new Error("An unexpected error occurred while fetching products");
   }
-}
+};

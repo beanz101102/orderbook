@@ -5,13 +5,16 @@ export const formatNumber = (val: number | string, suffix = 4): string => {
     const num = new BigNumber(val);
     if (isNaN(num.toNumber())) return "0.000";
 
-    if (num.isLessThanOrEqualTo(1e-7)) {
-      return num.toFixed(suffix);
-    }
-
     const format = `0,0.${"0".repeat(suffix)}`;
+    const formattedNum = numeral(val).format(format);
 
-    return numeral(val).format(format);
+    // Remove trailing zeros after decimal point
+    const parts = formattedNum.split(".");
+    if (parts.length === 2) {
+      const decimals = parts[1].replace(/0+$/, "");
+      return decimals ? `${parts[0]}.${decimals}` : parts[0];
+    }
+    return formattedNum;
   } catch {
     return "0.000";
   }

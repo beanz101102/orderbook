@@ -7,13 +7,14 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import React, { useState } from "react";
-import { useGetListPair } from "./hooks/useGetListPair";
+import { Product } from "./interface";
 
 interface PairSelectModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSelect: (symbol: string, baseAsset: string, quoteAsset: string) => void;
   selectedPair: string;
+  products: Product[];
 }
 
 const PairSelectModal: React.FC<PairSelectModalProps> = ({
@@ -21,11 +22,11 @@ const PairSelectModal: React.FC<PairSelectModalProps> = ({
   onClose,
   onSelect,
   selectedPair,
+  products,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const { data, error, isLoading } = useGetListPair();
 
-  const filteredProducts = data?.products.filter((product) =>
+  const filteredProducts = products?.filter((product) =>
     product.product_id.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -47,46 +48,38 @@ const PairSelectModal: React.FC<PairSelectModalProps> = ({
         </div>
 
         <div className="overflow-y-auto max-h-[60vh]">
-          {isLoading ? (
-            <div className="text-center py-4 text-gray-400">Loading...</div>
-          ) : error ? (
-            <div className="text-center py-4 text-red-500">
-              Error loading markets
-            </div>
-          ) : (
-            <div className="space-y-1">
-              {filteredProducts?.map((product) => (
-                <button
-                  key={product.product_id}
-                  onClick={() => {
-                    onSelect(
-                      product.product_id,
-                      product.base_asset_symbol,
-                      product.quote_asset_symbol
-                    );
-                    onClose();
-                  }}
-                  className={`w-full px-4 py-3 text-left hover:bg-gray-800 flex items-center justify-between rounded-lg ${
-                    selectedPair === product.product_id
-                      ? "bg-gray-800"
-                      : "bg-transparent"
-                  }`}
-                >
-                  <div>
-                    <span className="text-white font-medium">
-                      {product.base_asset_symbol}
-                    </span>
-                    <span className="text-gray-400">
-                      /{product.quote_asset_symbol}
-                    </span>
-                  </div>
-                  <span className="text-gray-400 text-sm">
-                    {product.display_name}
+          <div className="space-y-1">
+            {filteredProducts?.map((product) => (
+              <button
+                key={product.product_id}
+                onClick={() => {
+                  onSelect(
+                    product.product_id,
+                    product.base_asset_symbol,
+                    product.quote_asset_symbol
+                  );
+                  onClose();
+                }}
+                className={`w-full px-4 py-3 text-left hover:bg-gray-800 flex items-center justify-between rounded-lg ${
+                  selectedPair === product.product_id
+                    ? "bg-gray-800"
+                    : "bg-transparent"
+                }`}
+              >
+                <div>
+                  <span className="text-white font-medium">
+                    {product.base_asset_symbol}
                   </span>
-                </button>
-              ))}
-            </div>
-          )}
+                  <span className="text-gray-400">
+                    /{product.quote_asset_symbol}
+                  </span>
+                </div>
+                <span className="text-gray-400 text-sm">
+                  {product.display_name}
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
       </DialogContent>
     </Dialog>

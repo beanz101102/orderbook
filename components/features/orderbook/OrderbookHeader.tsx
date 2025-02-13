@@ -1,38 +1,39 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
+import { usePairStore } from "@/lib/stores/usePairStore";
+import PairSelectModal from "./PairSelectModal";
+import { getProducts } from "@/lib/services/products";
+import { ChevronDownIcon } from "lucide-react";
 
 interface OrderbookHeaderProps {
   selectedSymbol: string;
-  onOpenPairSelect: () => void;
+  products: Awaited<ReturnType<typeof getProducts>>["products"];
 }
 
 const OrderbookHeader: React.FC<OrderbookHeaderProps> = ({
   selectedSymbol,
-  onOpenPairSelect,
+  products,
 }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { setSelectedPair } = usePairStore();
+
   return (
-    <div>
-      <div className="flex justify-between items-center mb-4">
-        <button
-          onClick={onOpenPairSelect}
-          className="flex items-center gap-2 px-4 py-2 bg-gray-800/80 rounded-lg hover:bg-gray-800 transition-colors"
-        >
-          <span className="font-medium">{selectedSymbol}</span>
-          <svg
-            className="w-4 h-4 text-gray-400"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 9l-7 7-7-7"
-            />
-          </svg>
-        </button>
-      </div>
+    <div className="flex items-center justify-between">
+      <button
+        onClick={() => setIsModalOpen(true)}
+        className="flex items-center mb-4 gap-2 px-3 py-1.5 text-lg font-semibold border border-gray-700 rounded hover:border-gray-500 hover:text-gray-300"
+      >
+        {selectedSymbol}
+        <ChevronDownIcon className="w-4 h-4" />
+      </button>
+
+      <PairSelectModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSelect={setSelectedPair}
+        selectedPair={selectedSymbol}
+        products={products}
+      />
     </div>
   );
 };

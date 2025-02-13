@@ -3,14 +3,36 @@ import React from "react";
 import { motion } from "framer-motion";
 import { OrderListProps } from "./interface/order-list";
 import { formatNumber } from "@/lib/utils/formatNumber";
+import { Skeleton } from "@/components/ui/skeleton";
+
+const OrderListSkeleton = ({ count = 10 }) => {
+  return (
+    <div className="space-y-[1px]">
+      {Array.from({ length: count }).map((_, index) => (
+        <div key={index} className="grid grid-cols-[1.5fr,1fr,1fr] py-1.5 px-2">
+          <Skeleton className="h-5 w-20 bg-gray-800/50" />
+          <div className="text-right">
+            <Skeleton className="h-5 w-16 ml-auto bg-gray-800/50" />
+          </div>
+          <div className="text-right">
+            <Skeleton className="h-5 w-14 ml-auto bg-gray-800/50" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
 
 const OrderList: React.FC<OrderListProps> = ({
   orders,
   type,
   maxTotal,
-  decimals,
   limit,
 }) => {
+  if (!orders || orders.length === 0) {
+    return <OrderListSkeleton />;
+  }
+
   const textColor = type === "asks" ? "text-red-500" : "text-green-500";
   const bgColor = type === "asks" ? "bg-red-500/5" : "bg-green-500/5";
   const hoverBgColor =
@@ -31,7 +53,7 @@ const OrderList: React.FC<OrderListProps> = ({
           className={`grid grid-cols-[1.5fr,1fr,1fr] py-1.5 px-2 relative rounded ${hoverBgColor} transition-colors duration-200`}
         >
           <div className={`${textColor} z-10 font-medium`}>
-            {formatNumber(order.price, decimals)}
+            {formatNumber(order.price, 3)}
           </div>
           <div className="text-right z-10 text-gray-300">
             {formatNumber(order.size, 3)}

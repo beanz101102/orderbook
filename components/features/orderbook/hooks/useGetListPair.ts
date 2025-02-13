@@ -1,11 +1,11 @@
 import useSWR from "swr";
 import { Product } from "../interface";
-import { fetchJson } from "@/lib/utils/fetchJson";
+import { getProducts } from "@/lib/services/products";
 
 export const useGetListPair = () => {
   const { data, error, isLoading } = useSWR<{ products: Product[] }>(
-    "https://api.bsx.exchange/products",
-    fetchJson
+    "products",
+    () => getProducts()
   );
 
   return { data, error, isLoading };
